@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
 	public float speed = 20000;
 	public Rigidbody rb;
 	public int health = 5;
+	public Text scoreText;
+	public Text healthText;
+	public Image winLoseBG;
+	public GameObject winLoseObject;
+	public Text winLoseText;
 	
 	private int score = 0;
 
@@ -35,10 +41,8 @@ public class PlayerController : MonoBehaviour {
 
 	void Update () {
 		if (health == 0) {
-			Debug.Log("Game over!");
-			SceneManager.LoadScene("maze");
-			health = 5;
-			score = 0;
+			Lose();
+			StartCoroutine(LoadScene(3));
 		}
 	}
 
@@ -46,19 +50,48 @@ public class PlayerController : MonoBehaviour {
 		// if you touch a coin
 		if (other.gameObject.tag == "Coin") {
 			score++;
-			Debug.Log("Score: " + score);
+			SetScoreText();
 			Destroy(other.gameObject);
 		}
 
 		// if you touch a trap
 		if (other.gameObject.tag == "Trap") {
 			health--;
-			Debug.Log("Health: " + health);
+			SetHealthText();
 		}
 
 		// if player touches goal
 		if (other.gameObject.tag == "Goal") {
-			Debug.Log("You win!");
+			Win();
+			StartCoroutine(LoadScene(3));
 		}
 	}
+
+	void SetScoreText() {
+		scoreText.text = "Score: " + score;
+	}
+
+	void SetHealthText() {
+		healthText.text = "Health: " + health;
+	}
+
+	void Win() {
+		winLoseObject.SetActive(true);
+		winLoseText.color = Color.black;
+		winLoseBG.color = Color.green;
+		winLoseText.text = "You Win!";
+	}
+
+	void Lose() {
+		winLoseObject.SetActive(true);
+		winLoseText.color = Color.white;
+		winLoseBG.color = Color.red;
+		winLoseText.text = "Game Over!";
+	}
+
+	IEnumerator LoadScene (float seconds) {
+		yield return new WaitForSeconds(seconds);
+		SceneManager.LoadScene("maze");
+	}
 }
+

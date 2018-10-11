@@ -8,6 +8,7 @@ TagManager:
   - Coin
   - Trap
   - Goal
+  - WinLose
   layers:
   - Default
   - TransparentFX
